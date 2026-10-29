@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<!-- Página inicial: lista de álbuns. -->
+<!-- Página inicial (vitrine): fotos recentes de todos os álbuns públicos,
+     com uma aba para navegar por álbuns. -->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -11,23 +12,44 @@
     <!-- "defer": baixa os scripts sem travar a página e os executa, NA
          ORDEM, depois que o HTML foi lido. -->
     <script src="js/common.js" defer></script>
+    <script src="js/gallery.js" defer></script>
     <script src="js/home.js" defer></script>
 </head>
-<body>
+<!-- "page-wide": usa uma largura máxima maior, para a grade respirar. -->
+<body class="page-wide">
     <header class="site-header">
         <a class="site-header__logo" href="index.html">Acervo Fotográfico</a>
         <nav class="site-nav" id="site-nav"></nav>
     </header>
 
     <main>
-        <h1 class="page-title">Álbuns</h1>
-        <p class="page-subtitle">Fotografias organizadas por álbum.</p>
+        <div class="page-head">
+            <h1 class="page-title">Explorar</h1>
+            <!-- Personalize esta frase de apresentação. -->
+            <p class="page-subtitle">Fotografias autorais, das mais recentes às mais antigas.</p>
+        </div>
 
-        <!-- Mensagens de "carregando", "vazio" ou erro. -->
-        <p class="status" id="status">Carregando…</p>
+        <!-- Abas: os links mudam o "#" da URL e o home.js troca a seção. -->
+        <nav class="tabs" aria-label="Seções">
+            <a href="#fotos" id="tab-fotos">Fotos</a>
+            <a href="#albuns" id="tab-albuns">Álbuns</a>
+        </nav>
 
-        <!-- Os cartões dos álbuns são inseridos aqui pelo home.js. -->
-        <section class="album-grid" id="albums" aria-label="Álbuns"></section>
+        <!-- ABA FOTOS: grade justificada com rolagem infinita. -->
+        <section id="section-fotos" aria-label="Fotos recentes">
+            <div class="photo-grid photo-grid--feed" id="photos"></div>
+            <!-- Mensagens de carregando / fim / erro. -->
+            <div class="feed-status" id="feed-status"></div>
+            <!-- Marcador invisível: quando ele aparece na tela, carregamos
+                 a próxima página de fotos. -->
+            <div id="feed-sentinel" aria-hidden="true"></div>
+        </section>
+
+        <!-- ABA ÁLBUNS: carregada só quando a aba é aberta. -->
+        <section id="section-albuns" aria-label="Álbuns" hidden>
+            <p class="status" id="albums-status">Carregando…</p>
+            <div class="album-grid" id="albums"></div>
+        </section>
     </main>
 
     <footer class="site-footer">

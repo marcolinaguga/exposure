@@ -58,7 +58,7 @@ Antes do commit, confira a saída do `git status`. **Os itens `.env` e `.venv` n
 
 ### 3.3 Criar o repositório no GitHub
 
-1. Acesse https://github.com/new.
+1. Acesse https://githugitb.com/new.
 2. Dê um nome, por exemplo `galeria-fotos`, e marque **Private**.
 3. **Não** marque nenhuma opção de README, `.gitignore` ou licença.
 4. Clique em **Create repository** e copie a URL que aparece (termina em `.git`).

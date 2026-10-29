@@ -84,6 +84,13 @@ main {
     padding: 24px 24px 64px;
 }
 
+/* Páginas de fotos (vitrine e álbum) usam uma largura maior: a grade
+   ganha mais espaço em monitores grandes. Cabeçalho e conteúdo leem a
+   mesma variável, então continuam alinhados. */
+.page-wide {
+    --max-width: 1800px;
+}
+
 
 /* 3. CABEÇALHO E RODAPÉ -------------------------------------------------- */
 .site-header {
@@ -161,6 +168,59 @@ main {
 
 .status--error {
     color: var(--danger);
+}
+
+/* Cabeçalho da página inicial: título e frase lado a lado. */
+.page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 20px;
+}
+
+.page-head .page-subtitle {
+    margin-bottom: 16px;
+}
+
+/* Abas (Fotos / Álbuns): a ativa tem aria-current e ganha sublinhado. */
+.tabs {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.tabs a {
+    margin-bottom: -1px; /* sublinhado fica por cima da borda da barra */
+    padding: 10px 2px;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.tabs a:hover {
+    color: var(--text);
+}
+
+.tabs a[aria-current="page"] {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+}
+
+/* Mensagem abaixo da grade da vitrine (carregando, erro). */
+.feed-status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.feed-status:empty {
+    padding: 0;
 }
 
 .btn {
@@ -370,8 +430,47 @@ main {
     transition: opacity 0.2s;
 }
 
-.photo-tile:hover img {
-    opacity: 0.85;
+/* Legenda que aparece sobre a foto ao passar o mouse: degradê escuro
+   embaixo, com título e resumo do EXIF. pointer-events: none deixa o
+   clique "atravessar" a legenda até o link. */
+.photo-tile__caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    gap: 2px;
+    padding: 32px 12px 10px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.78));
+    color: #ffffff;
+    font-size: 0.78rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+}
+
+.photo-tile__caption strong,
+.photo-tile__caption span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.photo-tile__caption strong {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.photo-tile__caption span {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Só em aparelhos com mouse: no celular não existe "passar o mouse". */
+@media (hover: hover) {
+    .photo-tile:hover .photo-tile__caption,
+    .photo-tile:focus-visible .photo-tile__caption {
+        opacity: 1;
+    }
 }
 
 .photo-tile:focus-visible {
@@ -452,6 +551,18 @@ main {
     font-size: 1.2rem;
     margin-bottom: 6px;
     word-break: break-word;
+}
+
+.viewer__album {
+    display: inline-block;
+    margin-bottom: 14px;
+    color: var(--accent);
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.viewer__album:hover {
+    text-decoration: underline;
 }
 
 .viewer__description {

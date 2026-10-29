@@ -64,14 +64,15 @@ projeto-site-fotos/
 │       ├── albums.py       # /api/albums/*
 │       └── photos.py       # /api/photos/*
 ├── public/                 # Frontend (servido pela CDN da Vercel)
-│   ├── index.html          # Lista de álbuns
+│   ├── index.html          # Vitrine "Explorar" (fotos recentes) + aba Álbuns
 │   ├── album.html          # Grade de fotos + visualizador com EXIF
 │   ├── admin.html          # Login, álbuns, upload e gerenciamento
 │   ├── css/style.css       # Todo o visual (variáveis no topo)
 │   └── js/
 │       ├── common.js       # api(), login, el(), formatadores, menu
-│       ├── home.js         # Página inicial
-│       ├── album.js        # Grade e visualizador
+│       ├── gallery.js      # Miniatura da grade + visualizador (compartilhado)
+│       ├── home.js         # Vitrine com rolagem infinita e abas
+│       ├── album.js        # Página do álbum
 │       ├── upload.js       # EXIF, miniatura e envio ao Storage
 │       └── admin.js        # Painel do proprietário
 ├── supabase/
@@ -96,6 +97,7 @@ projeto-site-fotos/
 | DELETE | `/api/albums/{id}` | 🔒 | Apaga o álbum, as fotos e os arquivos |
 | POST | `/api/photos/upload-url` | 🔒 | Passo 1 do upload |
 | POST | `/api/photos` | 🔒 | Passo 3 do upload (registra a foto e o EXIF) |
+| GET | `/api/photos?limit=48&offset=0` | público | Vitrine: fotos dos álbuns públicos, das mais recentes para as mais antigas, em páginas |
 | GET | `/api/photos/{id}` | público* | Devolve a foto em resolução total com o EXIF |
 | PATCH | `/api/photos/{id}` | 🔒 | Edita título e descrição |
 | DELETE | `/api/photos/{id}` | 🔒 | Apaga a foto |

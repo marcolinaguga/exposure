@@ -8,9 +8,10 @@
     <title>Álbum · Acervo Fotográfico</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="js/common.js" defer></script>
+    <script src="js/gallery.js" defer></script>
     <script src="js/album.js" defer></script>
 </head>
-<body>
+<body class="page-wide">
     <header class="site-header">
         <a class="site-header__logo" href="index.html">Acervo Fotográfico</a>
         <nav class="site-nav" id="site-nav"></nav>
@@ -22,36 +23,9 @@
 
         <p class="status" id="status">Carregando…</p>
 
-        <!-- As miniaturas são inseridas aqui pelo album.js. -->
+        <!-- As miniaturas são inseridas aqui pelo album.js. O visualizador
+             em tela cheia é criado pelo gallery.js. -->
         <section class="photo-grid" id="photos" aria-label="Fotos do álbum"></section>
     </main>
-
-    <!-- ===================================================================
-         VISUALIZADOR: fica escondido (hidden) até clicar em uma foto.
-         role="dialog" e aria-* ajudam leitores de tela a entender que é
-         uma janela sobreposta.
-         =================================================================== -->
-    <div class="viewer" id="viewer" role="dialog" aria-modal="true"
-         aria-label="Visualização da foto" hidden>
-        <div class="viewer__stage" id="viewer-stage">
-            <img id="viewer-img" alt="">
-            <button class="viewer__nav viewer__nav--prev" id="viewer-prev"
-                    type="button" aria-label="Foto anterior">&#8249;</button>
-            <button class="viewer__nav viewer__nav--next" id="viewer-next"
-                    type="button" aria-label="Próxima foto">&#8250;</button>
-            <button class="viewer__close" id="viewer-close"
-                    type="button" aria-label="Fechar">&times;</button>
-        </div>
-
-        <aside class="viewer__info">
-            <h2 id="viewer-title"></h2>
-            <p class="viewer__description" id="viewer-description"></p>
-            <p class="viewer__counter" id="viewer-counter"></p>
-            <!-- <dl> = lista de rótulo/valor; preenchida com o EXIF. -->
-            <dl class="exif" id="viewer-exif"></dl>
-            <a class="btn" id="viewer-original" target="_blank"
-               rel="noopener">Abrir original</a>
-        </aside>
-    </div>
 </body>
 </html>

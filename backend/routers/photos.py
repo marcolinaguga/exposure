@@ -18,7 +18,7 @@ Vercel (limite de ~4,5 MB por requisição):
 
 from uuid import UUID, uuid4
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 
 from backend.auth import is_admin, require_admin
 from backend.database import get_supabase
@@ -148,6 +148,64 @@ def register_photo(payload: PhotoCreate) -> dict:
 # ---------------------------------------------------------------------------
 # Leitura (respeita a visibilidade do álbum)
 # ---------------------------------------------------------------------------
+@router.get("")
+def list_public_photos(
+    limit: int = Query(default=48, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> dict:
+    """
+    Vitrine da página inicial: fotos de TODOS os álbuns públicos, das
+    mais recentes para as mais antigas, em "páginas".
+
+    Mesmo com login, só aparecem fotos públicas: assim o proprietário vê
+    a página inicial exatamente como os visitantes a veem.
+
+    Paginação: "limit" é quantas fotos por página e "offset" quantas pular.
+    Ex.: limit=48&offset=0 é a 1ª página; limit=48&offset=48 é a 2ª.
+    """
+    db = get_supabase()
+
+    albums = (
+        db.table("albums")
+        .select("id, slug, title")
+        .eq("is_public", True)
+        .execute()
+        .data
+    )
+    if not albums:
+        return {"photos": [], "has_more": False}
+
+    # Dicionário {id_do_álbum: álbum} para achar o álbum de cada foto.
+    albums_by_id = {album["id"]: album for album in albums}
+
+    # Pedimos UMA foto a mais que o limite: se ela vier, existe próxima
+    # página. (range é inclusivo: offset..offset+limit = limit+1 linhas.)
+    rows = (
+        db.table("photos")
+        .select("*")
+        .in_("album_id", list(albums_by_id))
+        .order("created_at", desc=True)
+        .range(offset, offset + limit)
+        .execute()
+        .data
+    )
+    has_more = len(rows) > limit
+    rows = rows[:limit]
+
+    urls = create_view_urls(
+        [r["storage_path"] for r in rows] + [r["thumb_path"] for r in rows]
+    )
+
+    photos = []
+    for row in rows:
+        photo = photo_to_dict(row, urls)
+        album = albums_by_id[row["album_id"]]
+        photo["album"] = {"slug": album["slug"], "title": album["title"]}
+        photos.append(photo)
+
+    return {"photos": photos, "has_more": has_more}
+
+
 @router.get("/{photo_id}")
 def get_photo(photo_id: UUID, admin: bool = Depends(is_admin)) -> dict:
     """Devolve uma foto com EXIF e URL em resolução total."""
