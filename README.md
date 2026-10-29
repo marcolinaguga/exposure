@@ -79,7 +79,7 @@ projeto-site-fotos/
 ├── .env.example            # Modelo das variáveis de ambiente
 ├── requirements.txt        # Dependências de produção (Vercel)
 ├── requirements-dev.txt    # Dependências locais (uvicorn, dotenv)
-└── vercel.json             # Roteamento /api/* → função Python
+└── vercel.json             # Configuração da Vercel (pasta do frontend)
 ```
 
 ## 3. Rotas da API

@@ -5,8 +5,10 @@ Como a Vercel funciona com Python:
 - Todo arquivo .py dentro da pasta "api/" vira uma "função serverless".
 - Uma função serverless é um programa que a Vercel liga sob demanda quando
   chega uma requisição, e desliga depois de um tempo sem uso.
-- O arquivo vercel.json redireciona TODAS as URLs que começam com /api/
-  para esta única função. O FastAPI então decide qual rota responde.
+- A Vercel reconhece que esta função é um app FastAPI e entrega a ele
+  toda URL que não seja um arquivo da pasta "public/" (com o caminho
+  original, ex.: /api/auth/login). O FastAPI então decide qual rota
+  responde. Por isso o vercel.json NÃO precisa de regras de "rewrites".
 
 Este arquivo é propositalmente minúsculo: ele só importa o "app" que está
 no pacote "backend/". Assim o código real fica organizado em vários módulos
