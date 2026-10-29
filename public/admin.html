@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!-- Área do proprietário: login, álbuns, upload e gerenciamento de fotos. -->
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gerenciar · Acervo Fotográfico</title>
+    <!-- Pede aos buscadores (Google etc.) que não indexem esta página. -->
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- exifr: biblioteca que lê o EXIF das fotos no navegador.
+         Versão fixada (7.1.3) para o site não mudar sozinho se a
+         biblioteca for atualizada. -->
+    <script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/full.umd.js" defer></script>
+    <script src="js/common.js" defer></script>
+    <script src="js/upload.js" defer></script>
+    <script src="js/admin.js" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <a class="site-header__logo" href="index.html">Acervo Fotográfico</a>
+        <nav class="site-nav" id="site-nav"></nav>
+    </header>
+
+    <main>
+        <!-- ===============================================================
+             LOGIN (aparece quando não há token válido)
+             =============================================================== -->
+        <section class="panel panel--narrow" id="login-section" hidden>
+            <h2>Entrar</h2>
+            <form class="form" id="login-form">
+                <label>
+                    Senha
+                    <input type="password" name="password" required
+                           autocomplete="current-password" autofocus>
+                </label>
+                <p class="form-message" id="login-message" role="alert"></p>
+                <button class="btn btn--primary" type="submit">Entrar</button>
+            </form>
+        </section>
+
+        <!-- ===============================================================
+             PAINEL (aparece após o login)
+             =============================================================== -->
+        <div class="admin-columns" id="panel-section" hidden>
+
+            <!-- Coluna da esquerda: álbuns -->
+            <div>
+                <section class="panel">
+                    <h2>Novo álbum</h2>
+                    <form class="form" id="album-form">
+                        <label>
+                            Título
+                            <input type="text" name="title" required maxlength="120">
+                        </label>
+                        <label>
+                            Descrição (opcional)
+                            <textarea name="description" rows="3" maxlength="2000"></textarea>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" name="is_public">
+                            Público (visível para todos)
+                        </label>
+                        <p class="form-message" id="album-message" role="alert"></p>
+                        <button class="btn btn--primary" type="submit">Criar álbum</button>
+                    </form>
+                </section>
+
+                <section class="panel">
+                    <h2>Meus álbuns</h2>
+                    <p class="status" id="albums-status">Carregando…</p>
+                    <ul class="album-list" id="album-list"></ul>
+                </section>
+            </div>
+
+            <!-- Coluna da direita: álbum selecionado -->
+            <section class="panel" id="manager">
+                <p class="status" id="manager-empty">
+                    Selecione um álbum à esquerda para enviar e gerenciar fotos.
+                </p>
+
+                <div id="manager-content" hidden>
+                    <div class="manager-header">
+                        <h2 id="manager-title"></h2>
+                        <a class="btn btn--small" id="manager-view" href="#">Ver álbum</a>
+                    </div>
+
+                    <!-- Um <label> envolvendo o <input type="file"> faz a
+                         área toda funcionar como botão de escolher arquivos. -->
+                    <label class="dropzone" id="dropzone">
+                        <input type="file" id="file-input" multiple
+                               accept="image/jpeg,image/png">
+                        <strong>Arraste fotos para cá</strong>
+                        <span>ou clique para escolher (JPG ou PNG, até 50 MB)</span>
+                    </label>
+
+                    <ul class="upload-queue" id="upload-queue"></ul>
+
+                    <div class="manage-grid" id="manage-grid"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+</body>
+</html>

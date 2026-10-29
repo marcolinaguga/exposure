@@ -1,0 +1,758 @@
+/* ==========================================================================
+   ESTILOS DA GALERIA
+   Organização:
+   1. Variáveis (cores, espaçamentos) — mude aqui para alterar o visual todo
+   2. Base (reset e tipografia)
+   3. Cabeçalho e rodapé
+   4. Componentes reutilizáveis (botões, formulários, avisos)
+   5. Página inicial (cartões de álbum)
+   6. Página do álbum (grade justificada)
+   7. Visualizador de foto (tela cheia + EXIF)
+   8. Página de administração
+   9. Ajustes para telas pequenas (celular)
+   ========================================================================== */
+
+
+/* 1. VARIÁVEIS ------------------------------------------------------------
+   "Custom properties" do CSS: definidas uma vez em :root e reutilizadas com
+   var(--nome). Fundo escuro é o padrão em galerias porque não "compete"
+   com as cores das fotos. */
+:root {
+    --bg: #111111;
+    --surface: #1b1b1b;
+    --surface-hover: #242424;
+    --border: #2c2c2c;
+    --text: #ececec;
+    --text-muted: #9a9a9a;
+    --accent: #e0b25c;
+    --danger: #e5675f;
+    --success: #6cc08b;
+
+    --radius: 6px;
+    --gap: 6px;
+    --max-width: 1400px;
+    --row-height: 260px; /* altura-alvo das linhas da grade de fotos */
+
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+}
+
+
+/* 2. BASE ---------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box; /* largura inclui padding e borda */
+}
+
+/* Garante que o atributo HTML "hidden" sempre esconda o elemento, mesmo
+   que outra regra defina "display". O JavaScript usa isso bastante. */
+[hidden] {
+    display: none !important;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: inherit;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+h1,
+h2,
+h3 {
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+main {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 24px 24px 64px;
+}
+
+
+/* 3. CABEÇALHO E RODAPÉ -------------------------------------------------- */
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 20px 24px;
+}
+
+.site-header__logo {
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+}
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 0.95rem;
+}
+
+.site-nav a,
+.site-nav button {
+    color: var(--text-muted);
+    text-decoration: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+.site-nav a:hover,
+.site-nav button:hover {
+    color: var(--text);
+}
+
+.site-footer {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 24px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.site-footer a {
+    color: var(--text-muted);
+}
+
+
+/* 4. COMPONENTES --------------------------------------------------------- */
+.page-title {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+}
+
+.page-subtitle {
+    color: var(--text-muted);
+    margin: 0 0 24px;
+    max-width: 70ch;
+    white-space: pre-line; /* respeita quebras de linha da descrição */
+}
+
+.status {
+    color: var(--text-muted);
+    padding: 48px 0;
+    text-align: center;
+}
+
+.status--error {
+    color: var(--danger);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.btn:hover {
+    background: var(--surface-hover);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn--primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.btn--primary:hover {
+    background: #ebc277;
+}
+
+.btn--danger {
+    color: var(--danger);
+}
+
+.btn--small {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.65);
+    color: var(--text);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.form {
+    display: grid;
+    gap: 14px;
+}
+
+.form label {
+    display: grid;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.form input[type="text"],
+.form input[type="password"],
+.form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+}
+
+.form input:focus,
+.form textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+}
+
+.form .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+}
+
+.form-message {
+    min-height: 1.5em;
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--danger);
+}
+
+
+/* 5. PÁGINA INICIAL: CARTÕES DE ÁLBUM ------------------------------------
+   "auto-fill + minmax" cria quantas colunas couberem, cada uma com no
+   mínimo 260px. Assim a grade se adapta sozinha a qualquer largura. */
+.album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 28px 20px;
+}
+
+.album-card {
+    text-decoration: none;
+}
+
+.album-card__cover {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--surface);
+}
+
+.album-card__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* preenche o espaço cortando as sobras */
+    transition: transform 0.4s ease;
+}
+
+.album-card:hover .album-card__cover img {
+    transform: scale(1.03);
+}
+
+.album-card__cover .badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.album-card__placeholder {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.album-card__info {
+    padding-top: 10px;
+}
+
+.album-card__info h2 {
+    font-size: 1.05rem;
+}
+
+.album-card__info p {
+    margin: 2px 0 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+
+/* 6. PÁGINA DO ÁLBUM: GRADE JUSTIFICADA (estilo Flickr) -------------------
+   Cada foto recebe as variáveis --w e --h (largura/altura originais) pelo
+   JavaScript. Com elas:
+   - flex-basis: largura inicial proporcional ao formato da foto;
+   - flex-grow: as fotos "esticam" para completar a linha, mantendo a
+     proporção entre si;
+   - ::before com padding-bottom em % reserva a altura certa antes de a
+     imagem carregar (evita que a página "pule"). */
+.photo-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+}
+
+/* Elemento invisível que ocupa o resto da última linha, para que as
+   últimas fotos não fiquem gigantes. */
+.photo-grid::after {
+    content: "";
+    flex-grow: 999999;
+}
+
+.photo-tile {
+    position: relative;
+    flex-grow: calc(var(--w) / var(--h));
+    flex-basis: calc(var(--w) / var(--h) * var(--row-height));
+    overflow: hidden;
+    background: var(--surface);
+    cursor: zoom-in;
+}
+
+.photo-tile::before {
+    content: "";
+    display: block;
+    padding-bottom: calc(var(--h) / var(--w) * 100%);
+}
+
+.photo-tile img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.2s;
+}
+
+.photo-tile:hover img {
+    opacity: 0.85;
+}
+
+.photo-tile:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+
+/* 7. VISUALIZADOR (tela cheia) --------------------------------------------
+   Duas colunas: a foto (ocupa o que sobrar) e o painel de EXIF (320px). */
+.viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    background: rgba(8, 8, 8, 0.97);
+}
+
+.viewer__stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    padding: 24px 64px;
+}
+
+.viewer__stage img {
+    max-width: 100%;
+    max-height: calc(100vh - 48px);
+    object-fit: contain;
+    user-select: none;
+}
+
+.viewer__nav,
+.viewer__close {
+    position: absolute;
+    border: 0;
+    background: none;
+    color: var(--text-muted);
+    font-size: 2.6rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 12px;
+}
+
+.viewer__nav:hover,
+.viewer__close:hover {
+    color: var(--text);
+}
+
+.viewer__nav--prev {
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.viewer__nav--next {
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.viewer__close {
+    top: 4px;
+    right: 8px;
+    font-size: 2.2rem;
+}
+
+.viewer__info {
+    overflow-y: auto;
+    padding: 32px 24px;
+    border-left: 1px solid var(--border);
+    background: var(--bg);
+}
+
+.viewer__info h2 {
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+    word-break: break-word;
+}
+
+.viewer__description {
+    margin: 0 0 20px;
+    color: var(--text-muted);
+    white-space: pre-line;
+}
+
+.viewer__counter {
+    margin: 0 0 20px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* Lista de EXIF: <dl> = "lista de definições" (rótulo + valor). */
+.exif {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px 16px;
+    margin: 0 0 24px;
+    font-size: 0.9rem;
+}
+
+.exif dt {
+    color: var(--text-muted);
+}
+
+.exif dd {
+    margin: 0;
+    word-break: break-word;
+}
+
+.exif__empty {
+    grid-column: 1 / -1;
+    color: var(--text-muted);
+}
+
+
+/* 8. ADMINISTRAÇÃO ------------------------------------------------------- */
+.panel {
+    margin-bottom: 32px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+}
+
+.panel h2 {
+    font-size: 1.15rem;
+    margin-bottom: 16px;
+}
+
+.panel--narrow {
+    max-width: 420px;
+    margin: 48px auto;
+}
+
+.admin-columns {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 32px;
+    align-items: start;
+}
+
+.album-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.album-row {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+}
+
+.album-row--active {
+    border-color: var(--accent);
+}
+
+.album-row__title {
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.album-row__meta {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.album-row__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.album-row__actions label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    margin-right: auto;
+}
+
+.manager-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+/* Área de "arrastar e soltar" fotos. */
+.dropzone {
+    display: grid;
+    place-items: center;
+    gap: 6px;
+    padding: 36px 16px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    text-align: center;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.dropzone:hover,
+.dropzone--over {
+    border-color: var(--accent);
+    background: rgba(224, 178, 92, 0.06);
+}
+
+.dropzone strong {
+    color: var(--text);
+}
+
+.dropzone input {
+    display: none;
+}
+
+.upload-queue {
+    display: grid;
+    gap: 8px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.upload-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 12px;
+    font-size: 0.85rem;
+}
+
+.upload-item__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upload-item__status {
+    color: var(--text-muted);
+}
+
+.upload-item--done .upload-item__status {
+    color: var(--success);
+}
+
+.upload-item--error .upload-item__status {
+    color: var(--danger);
+}
+
+/* Barra de progresso: <progress> nativo com estilo próprio. */
+.upload-item progress {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 4px;
+    border: 0;
+    border-radius: 2px;
+    appearance: none;
+    background: var(--border);
+}
+
+.upload-item progress::-webkit-progress-bar {
+    background: var(--border);
+    border-radius: 2px;
+}
+
+.upload-item progress::-webkit-progress-value {
+    background: var(--accent);
+    border-radius: 2px;
+}
+
+.upload-item progress::-moz-progress-bar {
+    background: var(--accent);
+}
+
+.manage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+    margin-top: 24px;
+}
+
+.manage-card {
+    display: grid;
+    gap: 6px;
+    font-size: 0.8rem;
+}
+
+.manage-card__thumb {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--bg);
+}
+
+.manage-card__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.manage-card__thumb .badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    background: var(--accent);
+    color: #1a1a1a;
+}
+
+.manage-card__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-muted);
+}
+
+.manage-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+
+/* 9. TELAS PEQUENAS -------------------------------------------------------
+   "@media (max-width: ...)" aplica as regras só quando a tela for estreita.
+   ------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .admin-columns {
+        grid-template-columns: 1fr;
+    }
+
+    /* No celular o painel de EXIF vai para baixo da foto. */
+    .viewer {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr) auto;
+    }
+
+    .viewer__stage {
+        padding: 48px 8px 8px;
+    }
+
+    .viewer__stage img {
+        max-height: calc(65vh - 56px);
+    }
+
+    .viewer__info {
+        max-height: 35vh;
+        padding: 16px;
+        border-left: 0;
+        border-top: 1px solid var(--border);
+    }
+}
+
+@media (max-width: 600px) {
+    :root {
+        --row-height: 140px;
+        --gap: 3px;
+    }
+
+    main,
+    .site-header {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .page-title {
+        font-size: 1.4rem;
+    }
+
+    .panel {
+        padding: 16px;
+    }
+}

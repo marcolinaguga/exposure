@@ -1,0 +1,6 @@
+# Arquivos que a Vercel NÃO deve enviar no deploy (vale para a CLI;
+# pelo GitHub eles já não chegam, por causa do .gitignore).
+.venv/
+.env
+__pycache__/
+*.pyc

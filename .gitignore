@@ -1,0 +1,19 @@
+# Segredos: nunca versionar.
+.env
+.env.local
+
+# Ambiente virtual do Python.
+.venv/
+venv/
+
+# Arquivos gerados pelo Python.
+__pycache__/
+*.pyc
+
+# Pasta criada pela CLI da Vercel.
+.vercel/
+
+# Arquivos do sistema e do editor.
+.DS_Store
+Thumbs.db
+.vscode/

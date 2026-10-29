@@ -1,0 +1,13 @@
+# Dependências de PRODUÇÃO (instaladas automaticamente pela Vercel no deploy).
+# Mantemos esta lista enxuta: cada pacote aumenta o tamanho da função
+# serverless e o tempo de "cold start" (primeira execução após ociosidade).
+
+# Framework web: define as rotas da API e valida os dados de entrada.
+fastapi>=0.115,<1.0
+
+# Cliente oficial do Supabase: fala com o banco PostgreSQL (via API REST)
+# e com o Storage (onde ficam os arquivos das fotos).
+supabase>=2.15,<3.0
+
+# Geração e verificação de tokens de login (JSON Web Tokens).
+PyJWT>=2.9,<3.0

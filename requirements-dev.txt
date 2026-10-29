@@ -1,0 +1,11 @@
+# Dependências de DESENVOLVIMENTO (só no seu computador, a Vercel ignora).
+# A linha abaixo inclui tudo o que está em requirements.txt.
+-r requirements.txt
+
+# Servidor local para rodar o FastAPI no seu computador.
+# (Na Vercel quem faz esse papel é a própria plataforma.)
+uvicorn[standard]>=0.30,<1.0
+
+# Lê o arquivo .env e carrega as variáveis de ambiente localmente.
+# (Na Vercel as variáveis são configuradas no painel do projeto.)
+python-dotenv>=1.0,<2.0
