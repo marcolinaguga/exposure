@@ -5,15 +5,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Álbum · Acervo Fotográfico</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Álbum | Exposure</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,400&display=swap">
+    <!-- O ?v=2 é a versão do CSS: aumente o número sempre que mudar o
+         style.css, para o navegador baixar o arquivo novo em vez de usar
+         a cópia guardada (cache). -->
+    <link rel="stylesheet" href="css/style.css?v=2">
     <script src="js/common.js" defer></script>
     <script src="js/gallery.js" defer></script>
     <script src="js/album.js" defer></script>
 </head>
 <body class="page-wide">
     <header class="site-header">
-        <a class="site-header__logo" href="index.html">Acervo Fotográfico</a>
+        <a class="logo" href="index.html" aria-label="Exposure, página inicial">
+            <svg class="logo__wedge" viewBox="0 0 54 10" aria-hidden="true">
+                <rect x="0" y="0.5" width="9" height="9" fill="#232323"/>
+                <rect x="11" y="0.5" width="9" height="9" fill="#585858"/>
+                <rect x="22" y="0.5" width="9" height="9" fill="#8c8c8c"/>
+                <rect x="33" y="0.5" width="9" height="9" fill="#c2c2c2"/>
+                <rect x="44.5" y="1" width="8" height="8" fill="#ffffff" stroke="#232323"/>
+            </svg>
+            <span class="logo__name">exposure</span>
+        </a>
         <nav class="site-nav" id="site-nav"></nav>
     </header>
 
@@ -27,5 +43,34 @@
              em tela cheia é criado pelo gallery.js. -->
         <section class="photo-grid" id="photos" aria-label="Fotos do álbum"></section>
     </main>
+
+    <!-- Rodapé "quem sou eu": cópia do bloco de index.html (os
+         comentários explicativos estão lá). -->
+    <footer class="colophon">
+        <div class="colophon__inner">
+            <img class="colophon__portrait" src="img/gustavo-marcolina.jpg"
+                 alt="Retrato de Gustavo Marcolina" width="56" height="56"
+                 loading="lazy">
+
+            <div class="colophon__about">
+                <h2 class="colophon__name">Gustavo Marcolina</h2>
+                <p class="colophon__bio">
+                    Pseudo-nerd, aventureiro em Hyrule, entusiasta de fotografia
+                    e na odisseia em busca do SQL perdido.
+                </p>
+            </div>
+
+            <div class="colophon__side">
+                <nav class="colophon__links" aria-label="Redes sociais">
+                    <a href="https://www.instagram.com/marcolinaguga/" target="_blank" rel="me noopener">Instagram</a>
+                    <a href="https://www.linkedin.com/in/gustavomarcolina/" target="_blank" rel="me noopener">LinkedIn</a>
+                </nav>
+                <div class="colophon__legal">
+                    <span>© 2026 Gustavo Marcolina</span>
+                    <a href="admin.html">Entrar</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

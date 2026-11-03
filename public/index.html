@@ -1,59 +1,125 @@
 <!DOCTYPE html>
-<!-- Página inicial (vitrine): fotos recentes de todos os álbuns públicos,
-     com uma aba para navegar por álbuns. -->
+<!-- Página inicial: foto em destaque + apresentação, álbuns e todas as
+     fotos (grade com rolagem infinita). -->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <!-- Faz o layout se adaptar à largura do celular. -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Acervo Fotográfico</title>
-    <meta name="description" content="Acervo fotográfico pessoal.">
-    <link rel="stylesheet" href="css/style.css">
+    <title>Exposure</title>
+    <meta name="description" content="Exposure: acervo fotográfico pessoal.">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+    <!-- Fonte Spectral (Google Fonts). "preconnect" adianta a conexão. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,400&display=swap">
+    <!-- O ?v=2 é a versão do CSS: aumente o número sempre que mudar o
+         style.css, para o navegador baixar o arquivo novo em vez de usar
+         a cópia guardada (cache). -->
+    <link rel="stylesheet" href="css/style.css?v=2">
+
     <!-- "defer": baixa os scripts sem travar a página e os executa, NA
          ORDEM, depois que o HTML foi lido. -->
     <script src="js/common.js" defer></script>
     <script src="js/gallery.js" defer></script>
     <script src="js/home.js" defer></script>
 </head>
-<!-- "page-wide": usa uma largura máxima maior, para a grade respirar. -->
+<!-- "page-wide": largura máxima maior, para as fotos respirarem. -->
 <body class="page-wide">
     <header class="site-header">
-        <a class="site-header__logo" href="index.html">Acervo Fotográfico</a>
+        <!-- LOGO: escala de exposição (do preto ao branco) + nome.
+             O mesmo bloco se repete em todas as páginas. -->
+        <a class="logo" href="index.html" aria-label="Exposure, página inicial">
+            <svg class="logo__wedge" viewBox="0 0 54 10" aria-hidden="true">
+                <rect x="0" y="0.5" width="9" height="9" fill="#232323"/>
+                <rect x="11" y="0.5" width="9" height="9" fill="#585858"/>
+                <rect x="22" y="0.5" width="9" height="9" fill="#8c8c8c"/>
+                <rect x="33" y="0.5" width="9" height="9" fill="#c2c2c2"/>
+                <rect x="44.5" y="1" width="8" height="8" fill="#ffffff" stroke="#232323"/>
+            </svg>
+            <span class="logo__name">exposure</span>
+        </a>
         <nav class="site-nav" id="site-nav"></nav>
     </header>
 
     <main>
-        <div class="page-head">
-            <h1 class="page-title">Explorar</h1>
-            <!-- Personalize esta frase de apresentação. -->
-            <p class="page-subtitle">Fotografias autorais, das mais recentes às mais antigas.</p>
-        </div>
+        <!-- DESTAQUE: a foto mais recente (preenchida pelo home.js) e a
+             apresentação do acervo. -->
+        <section class="hero hero--text-only" id="hero">
+            <figure class="hero__plate" id="hero-plate" hidden>
+                <a class="hero__photo" id="hero-link" href="#">
+                    <img id="hero-img" alt="">
+                </a>
+                <figcaption class="plate-caption" id="hero-caption"></figcaption>
+            </figure>
 
-        <!-- Abas: os links mudam o "#" da URL e o home.js troca a seção. -->
-        <nav class="tabs" aria-label="Seções">
-            <a href="#fotos" id="tab-fotos">Fotos</a>
-            <a href="#albuns" id="tab-albuns">Álbuns</a>
-        </nav>
-
-        <!-- ABA FOTOS: grade justificada com rolagem infinita. -->
-        <section id="section-fotos" aria-label="Fotos recentes">
-            <div class="photo-grid photo-grid--feed" id="photos"></div>
-            <!-- Mensagens de carregando / fim / erro. -->
-            <div class="feed-status" id="feed-status"></div>
-            <!-- Marcador invisível: quando ele aparece na tela, carregamos
-                 a próxima página de fotos. -->
-            <div id="feed-sentinel" aria-hidden="true"></div>
+            <div class="hero__text">
+                <!-- Personalize o título e a apresentação. -->
+                <h1 class="hero__title">Fotografias de viagem e do dia a dia.</h1>
+                <p class="hero__intro">
+                    Um arquivo pessoal, organizado em álbuns. Abra qualquer
+                    foto para ver a câmera, a lente e a exposição usadas.
+                </p>
+                <a class="text-link" href="#albuns">Ver os álbuns</a>
+            </div>
         </section>
 
-        <!-- ABA ÁLBUNS: carregada só quando a aba é aberta. -->
-        <section id="section-albuns" aria-label="Álbuns" hidden>
-            <p class="status" id="albums-status">Carregando…</p>
+        <!-- ÁLBUNS, como capítulos de um livro. -->
+        <section class="section" id="albuns" aria-labelledby="albuns-title">
+            <h2 class="section__title" id="albuns-title">Álbuns</h2>
+            <p class="status" id="albums-status">Carregando os álbuns…</p>
             <div class="album-grid" id="albums"></div>
+        </section>
+
+        <!-- TODAS AS FOTOS: grade justificada com rolagem infinita. -->
+        <section class="section" id="fotos" aria-labelledby="fotos-title">
+            <h2 class="section__title" id="fotos-title">Todas as fotos</h2>
+            <div class="photo-grid" id="photos"></div>
+            <!-- Mensagens de carregando / erro. -->
+            <div class="feed-status" id="feed-status"></div>
+            <!-- Marcador invisível: quando ele chega perto da tela,
+                 carregamos a próxima página de fotos. -->
+            <div id="feed-sentinel" aria-hidden="true"></div>
         </section>
     </main>
 
-    <footer class="site-footer">
-        <a href="admin.html">Entrar</a>
+    <!-- =================================================================
+         RODAPÉ "QUEM SOU EU"
+         Faixa preta compacta: retrato, nome e apresentação à esquerda;
+         redes e direitos autorais à direita. O mesmo bloco está em
+         album.html; se mudar o texto aqui, mude lá também.
+         ================================================================= -->
+    <footer class="colophon">
+        <div class="colophon__inner">
+            <!-- loading="lazy": só baixa a foto quando o visitante rolar
+                 até o rodapé. -->
+            <img class="colophon__portrait" src="img/gustavo-marcolina.jpg"
+                 alt="Retrato de Gustavo Marcolina" width="56" height="56"
+                 loading="lazy">
+
+            <div class="colophon__about">
+                <h2 class="colophon__name">Gustavo Marcolina</h2>
+                <p class="colophon__bio">
+                    Pseudo-nerd, aventureiro em Hyrule, entusiasta de fotografia
+                    e na odisseia em busca do SQL perdido.
+                </p>
+            </div>
+
+            <div class="colophon__side">
+                <!-- rel="me" diz aos sites que esses perfis são seus;
+                     rel="noopener" é uma proteção padrão para links que
+                     abrem em outra aba. -->
+                <nav class="colophon__links" aria-label="Redes sociais">
+                    <a href="https://www.instagram.com/marcolinaguga/" target="_blank" rel="me noopener">Instagram</a>
+                    <a href="https://www.linkedin.com/in/gustavomarcolina/" target="_blank" rel="me noopener">LinkedIn</a>
+                </nav>
+                <div class="colophon__legal">
+                    <span>© 2026 Gustavo Marcolina</span>
+                    <a href="admin.html">Entrar</a>
+                </div>
+            </div>
+        </div>
     </footer>
 </body>
 </html>

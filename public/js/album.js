@@ -31,7 +31,7 @@ async function loadAlbum() {
         const album = await api(`/albums/${encodeURIComponent(slug)}`);
         albumPhotos = album.photos;
 
-        document.title = `${album.title} · Acervo Fotográfico`;
+        document.title = `${album.title} | Exposure`;
         $("album-title").textContent = album.title;
         $("album-description").textContent = album.description || "";
 

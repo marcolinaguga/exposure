@@ -12,7 +12,7 @@
  * "#foto-<id>". Assim o link pode ser compartilhado já com a foto aberta,
  * e o botão "voltar" do navegador fecha o visualizador.
  *
- * Depende de common.js (el, api, exifRows, exifSummary, formatBytes).
+ * Depende de common.js (el, api, exifRows, formatBytes).
  */
 
 "use strict";
@@ -23,8 +23,9 @@
    ========================================================================== */
 
 /**
- * Cria o link-miniatura de uma foto. Ao passar o mouse, aparece uma
- * legenda com o título (ou o nome do álbum) e o resumo do EXIF.
+ * Cria o link-miniatura de uma foto: a imagem numa "moldura" que reserva
+ * o espaço certo e, embaixo, uma legenda de uma linha, como num livro.
+ * A legenda é o título da foto ou, na página inicial, o nome do álbum.
  */
 function photoTile(photo, index) {
     // Sem dimensões conhecidas, assume o formato 3:2 de uma DSLR.
@@ -32,27 +33,26 @@ function photoTile(photo, index) {
     const height = photo.height || 2;
 
     const caption = photo.title || (photo.album && photo.album.title) || "";
-    const summary = exifSummary(photo.exif);
 
     return el("a", {
         class: "photo-tile",
         href: `#foto-${photo.id}`,
-        // --w e --h alimentam o cálculo da grade no CSS (seção 6).
+        // --w e --h alimentam o cálculo da grade no CSS (seção 7).
         style: { "--w": width, "--h": height },
         "aria-label": caption || `Foto ${index + 1}`,
         // O link muda a URL; aqui só anotamos que a abertura veio da grade.
         onclick: () => Viewer.markOpenedFromGrid(),
     }, [
-        el("img", {
-            src: photo.thumb_url,
-            alt: photo.title || "",
-            loading: "lazy", // só baixa quando estiver perto de aparecer
-            decoding: "async",
-        }),
-        (caption || summary) && el("span", { class: "photo-tile__caption" }, [
-            caption && el("strong", { text: caption }),
-            summary && el("span", { text: summary }),
+        el("span", { class: "photo-tile__frame" }, [
+            el("img", {
+                src: photo.thumb_url,
+                alt: photo.title || "",
+                loading: "lazy", // só baixa quando estiver perto de aparecer
+                decoding: "async",
+            }),
         ]),
+        // Sempre presente (mesmo vazia) para alinhar as fotos da linha.
+        el("span", { class: "photo-tile__caption", text: caption }),
     ]);
 }
 

@@ -1,40 +1,54 @@
 /* ==========================================================================
-   ESTILOS DA GALERIA
+   EXPOSURE — ESTILOS
+   Conceito: um fotolivro na tela. Papel branco, tinta escura, uma única
+   família tipográfica (Spectral) e nenhuma cor de destaque: quem dá cor
+   ao site são as fotos. O único elemento "marcante" é a logo, uma escala
+   de exposição de cinco tons (do preto ao branco).
+
    Organização:
-   1. Variáveis (cores, espaçamentos) — mude aqui para alterar o visual todo
+   1. Variáveis (cores, tipografia, espaçamentos)
    2. Base (reset e tipografia)
-   3. Cabeçalho e rodapé
+   3. Cabeçalho, logo e rodapé
    4. Componentes reutilizáveis (botões, formulários, avisos)
-   5. Página inicial (cartões de álbum)
-   6. Página do álbum (grade justificada)
-   7. Visualizador de foto (tela cheia + EXIF)
-   8. Página de administração
-   9. Ajustes para telas pequenas (celular)
+   5. Página inicial: destaque (hero) e seções
+   6. Cartões de álbum
+   7. Grade justificada de fotos (com legendas)
+   8. Visualizador de foto (tela cheia + EXIF)
+   9. Administração
+   10. Telas pequenas e movimento reduzido
    ========================================================================== */
 
 
 /* 1. VARIÁVEIS ------------------------------------------------------------
-   "Custom properties" do CSS: definidas uma vez em :root e reutilizadas com
-   var(--nome). Fundo escuro é o padrão em galerias porque não "compete"
-   com as cores das fotos. */
+   "Custom properties": definidas uma vez em :root e reutilizadas com
+   var(--nome). Mude aqui para alterar o visual do site inteiro. */
 :root {
-    --bg: #111111;
-    --surface: #1b1b1b;
-    --surface-hover: #242424;
-    --border: #2c2c2c;
-    --text: #ececec;
-    --text-muted: #9a9a9a;
-    --accent: #e0b25c;
-    --danger: #e5675f;
-    --success: #6cc08b;
+    /* Cores */
+    --paper: #ffffff; /* fundo: papel branco, como num fotolivro */
+    --ink: #232323; /* texto principal */
+    --graphite: #6b6b6b; /* legendas e textos secundários */
+    --line: #e4e4e4; /* linhas finas e bordas */
+    --proof: #f3f3f3; /* áreas de apoio (painéis, fotos carregando) */
+    --danger: #b3261e;
+    --success: #2e7d32;
 
-    --radius: 6px;
-    --gap: 6px;
+    /* Tipografia: uma família só. A escala segue proporções clássicas
+       (cada passo ~1,25× o anterior). */
+    --font: "Spectral", Georgia, "Times New Roman", serif;
+    --text-sm: 0.875rem; /* 14px: legendas */
+    --text-base: 1.0625rem; /* 17px: texto corrido */
+    --text-md: 1.3125rem; /* 21px: títulos pequenos */
+    --text-lg: 1.6875rem; /* 27px: títulos de seção */
+    --text-xl: 2.125rem; /* 34px: título de página */
+    --text-hero: clamp(2.125rem, 1.2rem + 2.6vw, 3.375rem); /* 34→54px */
+
+    /* Espaçamentos e medidas */
+    --radius: 2px; /* só em botões e campos; fotos têm cantos retos */
+    --gutter: 40px; /* margem lateral da página */
     --max-width: 1400px;
-    --row-height: 260px; /* altura-alvo das linhas da grade de fotos */
-
-    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        "Helvetica Neue", Arial, sans-serif;
+    --row-height: 300px; /* altura-alvo das linhas da grade de fotos */
+    --grid-gap-x: 14px;
+    --grid-gap-y: 30px; /* maior, para caber a legenda abaixo da foto */
 }
 
 
@@ -53,11 +67,11 @@
 
 body {
     margin: 0;
-    background: var(--bg);
-    color: var(--text);
+    background: var(--paper);
+    color: var(--ink);
     font-family: var(--font);
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: var(--text-base);
+    line-height: 1.6; /* serifa pede um pouco mais de entrelinha */
     -webkit-font-smoothing: antialiased;
 }
 
@@ -74,25 +88,30 @@ h1,
 h2,
 h3 {
     margin: 0;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+/* Foco visível para quem navega pelo teclado (Tab). */
+:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
 }
 
 main {
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 24px 24px 64px;
+    padding: 16px var(--gutter) 96px;
 }
 
-/* Páginas de fotos (vitrine e álbum) usam uma largura maior: a grade
-   ganha mais espaço em monitores grandes. Cabeçalho e conteúdo leem a
-   mesma variável, então continuam alinhados. */
+/* Páginas de fotos usam uma largura maior: a grade respira em monitores
+   grandes. Cabeçalho e conteúdo leem a mesma variável e ficam alinhados. */
 .page-wide {
-    --max-width: 1800px;
+    --max-width: 1760px;
 }
 
 
-/* 3. CABEÇALHO E RODAPÉ -------------------------------------------------- */
+/* 3. CABEÇALHO, LOGO E RODAPÉ ------------------------------------------- */
 .site-header {
     display: flex;
     align-items: center;
@@ -100,127 +119,167 @@ main {
     gap: 16px;
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 20px 24px;
+    padding: 28px var(--gutter);
 }
 
-.site-header__logo {
-    font-size: 1.1rem;
-    font-weight: 600;
+/* Logo: escala de exposição (SVG) + nome. */
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
     text-decoration: none;
-    letter-spacing: 0.02em;
+}
+
+.logo__wedge {
+    width: 54px;
+    height: 10px;
+}
+
+.logo__name {
+    font-size: var(--text-md);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1;
 }
 
 .site-nav {
     display: flex;
     align-items: center;
-    gap: 20px;
-    font-size: 0.95rem;
+    gap: 24px;
 }
 
 .site-nav a,
 .site-nav button {
-    color: var(--text-muted);
-    text-decoration: none;
-    background: none;
-    border: 0;
     padding: 0;
+    border: 0;
+    background: none;
+    color: var(--graphite);
     font: inherit;
+    text-decoration: none;
     cursor: pointer;
 }
 
 .site-nav a:hover,
 .site-nav button:hover {
-    color: var(--text);
+    color: var(--ink);
 }
 
-.site-footer {
+/* Rodapé "quem sou eu": uma faixa preta compacta que ocupa a largura
+   toda da tela, como a última página escura de um fotolivro.
+   O <footer> pinta o fundo de ponta a ponta; o .colophon__inner limita
+   o conteúdo à mesma largura do resto do site. */
+.colophon {
+    --night: #000000; /* fundo preto do rodapé */
+    --night-text: #ffffff; /* texto principal sobre o preto */
+    --night-muted: #a3a3a3; /* texto secundário (contraste suficiente) */
+
+    background: var(--night);
+    color: var(--night-text);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+}
+
+.colophon__inner {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) auto; /* retrato | texto | links */
+    gap: 20px;
+    align-items: center;
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 24px;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    text-align: center;
+    padding: 28px var(--gutter);
 }
 
-.site-footer a {
-    color: var(--text-muted);
+/* Retrato pequeno e quadrado; object-position mantém o rosto no quadro. */
+.colophon__portrait {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    object-position: center 20%;
+}
+
+.colophon__name {
+    font-size: var(--text-base);
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.colophon__bio {
+    margin: 2px 0 0;
+    color: var(--night-muted);
+    font-style: italic;
+}
+
+/* Coluna da direita: redes em cima, direitos autorais embaixo. */
+.colophon__side {
+    display: grid;
+    gap: 4px;
+    justify-items: end;
+    text-align: right;
+}
+
+.colophon__links {
+    display: flex;
+    gap: 20px;
+}
+
+.colophon__legal {
+    display: flex;
+    gap: 16px;
+    color: var(--night-muted);
+}
+
+.colophon a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+.colophon a:hover {
+    color: var(--night-text);
+    text-decoration-thickness: 2px;
+}
+
+/* O contorno de foco padrão é escuro; sobre o preto ele precisa ser branco. */
+.colophon :focus-visible {
+    outline-color: var(--night-text);
 }
 
 
 /* 4. COMPONENTES --------------------------------------------------------- */
 .page-title {
-    font-size: 1.8rem;
     margin-bottom: 8px;
+    font-size: var(--text-xl);
+    font-weight: 300;
 }
 
 .page-subtitle {
-    color: var(--text-muted);
-    margin: 0 0 24px;
-    max-width: 70ch;
+    max-width: 62ch;
+    margin: 0 0 40px;
+    color: var(--graphite);
     white-space: pre-line; /* respeita quebras de linha da descrição */
 }
 
 .status {
-    color: var(--text-muted);
     padding: 48px 0;
-    text-align: center;
+    color: var(--graphite);
+    font-style: italic;
 }
 
 .status--error {
     color: var(--danger);
+    font-style: normal;
 }
 
-/* Cabeçalho da página inicial: título e frase lado a lado. */
-.page-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 4px 20px;
+/* Link de texto sublinhado (ex.: "Ver os álbuns"). */
+.text-link {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
 }
 
-.page-head .page-subtitle {
-    margin-bottom: 16px;
-}
-
-/* Abas (Fotos / Álbuns): a ativa tem aria-current e ganha sublinhado. */
-.tabs {
-    display: flex;
-    gap: 28px;
-    margin-bottom: 16px;
-    border-bottom: 1px solid var(--border);
-}
-
-.tabs a {
-    margin-bottom: -1px; /* sublinhado fica por cima da borda da barra */
-    padding: 10px 2px;
-    border-bottom: 2px solid transparent;
-    color: var(--text-muted);
-    text-decoration: none;
-    font-size: 0.95rem;
-}
-
-.tabs a:hover {
-    color: var(--text);
-}
-
-.tabs a[aria-current="page"] {
-    color: var(--text);
-    border-bottom-color: var(--accent);
-}
-
-/* Mensagem abaixo da grade da vitrine (carregando, erro). */
-.feed-status {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    padding: 24px 0;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-.feed-status:empty {
-    padding: 0;
+.text-link:hover {
+    text-decoration-thickness: 2px;
 }
 
 .btn {
@@ -228,109 +287,216 @@ main {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 8px 14px;
-    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border: 1px solid var(--ink);
     border-radius: var(--radius);
-    background: var(--surface);
-    color: var(--text);
+    background: var(--paper);
+    color: var(--ink);
     font: inherit;
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
     text-decoration: none;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
 }
 
 .btn:hover {
-    background: var(--surface-hover);
+    background: var(--proof);
 }
 
 .btn:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
 }
 
 .btn--primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #1a1a1a;
-    font-weight: 600;
+    background: var(--ink);
+    color: var(--paper);
 }
 
 .btn--primary:hover {
-    background: #ebc277;
+    background: #000000;
 }
 
 .btn--danger {
+    border-color: var(--line);
     color: var(--danger);
 }
 
 .btn--small {
-    padding: 4px 10px;
-    font-size: 0.8rem;
+    padding: 3px 10px;
+    font-size: 0.8125rem;
 }
 
 .badge {
     display: inline-block;
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: rgba(0, 0, 0, 0.65);
-    color: var(--text);
-    font-size: 0.75rem;
-    font-weight: 500;
+    padding: 1px 8px;
+    border-radius: var(--radius);
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 0.8125rem;
 }
 
 .form {
     display: grid;
-    gap: 14px;
+    gap: 16px;
 }
 
 .form label {
     display: grid;
     gap: 6px;
-    font-size: 0.9rem;
-    color: var(--text-muted);
+    color: var(--graphite);
+    font-size: var(--text-sm);
 }
 
 .form input[type="text"],
 .form input[type="password"],
 .form textarea {
     width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
+    padding: 9px 12px;
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    background: var(--bg);
-    color: var(--text);
+    background: var(--paper);
+    color: var(--ink);
     font: inherit;
 }
 
 .form input:focus,
 .form textarea:focus {
-    outline: 2px solid var(--accent);
-    outline-offset: -1px;
+    border-color: var(--ink);
+    outline: none;
 }
 
 .form .checkbox {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--text);
+    color: var(--ink);
 }
 
 .form-message {
     min-height: 1.5em;
     margin: 0;
-    font-size: 0.9rem;
     color: var(--danger);
+    font-size: var(--text-sm);
+}
+
+/* Mensagem abaixo da grade (carregando, erro). */
+.feed-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 32px 0;
+    color: var(--graphite);
+    font-style: italic;
+}
+
+.feed-status:empty {
+    padding: 0;
 }
 
 
-/* 5. PÁGINA INICIAL: CARTÕES DE ÁLBUM ------------------------------------
+/* 5. PÁGINA INICIAL ------------------------------------------------------
+   Destaque (hero): a foto mais recente à esquerda (2/3 da largura) e o
+   texto de apresentação à direita, alinhado pela BASE da foto, como numa
+   página dupla de livro. */
+/* fit-content(64%): a coluna da foto tem a largura da PRÓPRIA foto, até
+   64% da página. Uma foto vertical fica estreita e o texto encosta nela,
+   em vez de sobrar um vazio entre os dois. */
+.hero {
+    display: grid;
+    grid-template-columns: fit-content(64%) minmax(280px, 1fr);
+    gap: 56px;
+    align-items: end;
+    margin-bottom: 120px;
+}
+
+/* Sem foto ainda: o texto ocupa a largura toda. */
+.hero--text-only {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.hero__plate {
+    margin: 0;
+}
+
+.hero__photo {
+    display: block;
+    cursor: zoom-in;
+}
+
+/* Largura automática limitada pela coluna e pela altura da tela (78vh):
+   a foto aparece inteira, sem cortes, no maior tamanho que couber. */
+.hero__photo img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 78vh;
+    opacity: 0;
+    transition: opacity 0.9s ease;
+}
+
+/* O único movimento automático do site: a foto surge ao carregar. */
+.hero__photo img.is-loaded {
+    opacity: 1;
+}
+
+.hero__title {
+    max-width: 14ch;
+    margin-bottom: 20px;
+    font-size: var(--text-hero);
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+}
+
+.hero__intro {
+    max-width: 36ch;
+    margin: 0 0 24px;
+    color: var(--graphite);
+}
+
+/* Legenda de prancha: título em itálico, procedência em cinza. */
+.plate-caption {
+    display: grid;
+    margin-top: 12px;
+    font-size: var(--text-sm);
+    line-height: 1.45;
+}
+
+.plate-caption em {
+    font-size: var(--text-base);
+}
+
+.plate-caption span {
+    color: var(--graphite);
+}
+
+/* Seções da página (Álbuns, Todas as fotos). */
+.section {
+    margin-bottom: 96px;
+    scroll-margin-top: 24px; /* respiro ao pular para #albuns */
+}
+
+/* A última seção não precisa de margem: o espaço de baixo do <main>
+   já separa o conteúdo do rodapé. */
+main > .section:last-child {
+    margin-bottom: 0;
+}
+
+.section__title {
+    margin-bottom: 28px;
+    font-size: var(--text-lg);
+    font-weight: 300;
+}
+
+
+/* 6. CARTÕES DE ÁLBUM ----------------------------------------------------
    "auto-fill + minmax" cria quantas colunas couberem, cada uma com no
-   mínimo 260px. Assim a grade se adapta sozinha a qualquer largura. */
+   mínimo 280px. Assim a grade se adapta sozinha a qualquer largura. */
 .album-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 28px 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 40px 28px;
 }
 
 .album-card {
@@ -339,21 +505,15 @@ main {
 
 .album-card__cover {
     position: relative;
-    aspect-ratio: 3 / 2;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
-    border-radius: var(--radius);
-    background: var(--surface);
+    background: var(--proof);
 }
 
 .album-card__cover img {
     width: 100%;
     height: 100%;
     object-fit: cover; /* preenche o espaço cortando as sobras */
-    transition: transform 0.4s ease;
-}
-
-.album-card:hover .album-card__cover img {
-    transform: scale(1.03);
 }
 
 .album-card__cover .badge {
@@ -366,37 +526,44 @@ main {
     display: grid;
     place-items: center;
     height: 100%;
-    color: var(--text-muted);
-    font-size: 0.9rem;
+    color: var(--graphite);
+    font-style: italic;
 }
 
 .album-card__info {
-    padding-top: 10px;
+    padding-top: 12px;
 }
 
 .album-card__info h2 {
-    font-size: 1.05rem;
+    font-size: var(--text-md);
+}
+
+.album-card:hover .album-card__info h2 {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
 }
 
 .album-card__info p {
     margin: 2px 0 0;
-    color: var(--text-muted);
-    font-size: 0.85rem;
+    color: var(--graphite);
+    font-size: var(--text-sm);
 }
 
 
-/* 6. PÁGINA DO ÁLBUM: GRADE JUSTIFICADA (estilo Flickr) -------------------
+/* 7. GRADE JUSTIFICADA DE FOTOS ------------------------------------------
    Cada foto recebe as variáveis --w e --h (largura/altura originais) pelo
    JavaScript. Com elas:
    - flex-basis: largura inicial proporcional ao formato da foto;
    - flex-grow: as fotos "esticam" para completar a linha, mantendo a
      proporção entre si;
-   - ::before com padding-bottom em % reserva a altura certa antes de a
-     imagem carregar (evita que a página "pule"). */
+   - o ::before da moldura reserva a altura certa antes de a imagem
+     carregar (evita que a página "pule").
+   Abaixo de cada foto vai uma legenda de uma linha, como num livro. */
 .photo-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--gap);
+    gap: var(--grid-gap-y) var(--grid-gap-x);
 }
 
 /* Elemento invisível que ocupa o resto da última linha, para que as
@@ -407,87 +574,66 @@ main {
 }
 
 .photo-tile {
-    position: relative;
+    display: block;
     flex-grow: calc(var(--w) / var(--h));
     flex-basis: calc(var(--w) / var(--h) * var(--row-height));
-    overflow: hidden;
-    background: var(--surface);
+    min-width: 0;
+    text-decoration: none;
     cursor: zoom-in;
 }
 
-.photo-tile::before {
+.photo-tile__frame {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: var(--proof);
+}
+
+.photo-tile__frame::before {
     content: "";
     display: block;
     padding-bottom: calc(var(--h) / var(--w) * 100%);
 }
 
-.photo-tile img {
+.photo-tile__frame img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: opacity 0.2s;
 }
 
-/* Legenda que aparece sobre a foto ao passar o mouse: degradê escuro
-   embaixo, com título e resumo do EXIF. pointer-events: none deixa o
-   clique "atravessar" a legenda até o link. */
+/* A legenda sempre ocupa uma linha (mesmo vazia) para as fotos de uma
+   mesma linha da grade ficarem alinhadas. */
 .photo-tile__caption {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: grid;
-    gap: 2px;
-    padding: 32px 12px 10px;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.78));
-    color: #ffffff;
-    font-size: 0.78rem;
-    opacity: 0;
-    transition: opacity 0.2s;
-    pointer-events: none;
-}
-
-.photo-tile__caption strong,
-.photo-tile__caption span {
+    display: block;
+    min-height: 1.5em;
+    margin-top: 6px;
     overflow: hidden;
+    color: var(--graphite);
+    font-size: var(--text-sm);
+    font-style: italic;
+    line-height: 1.5;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.photo-tile__caption strong {
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.photo-tile__caption span {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-/* Só em aparelhos com mouse: no celular não existe "passar o mouse". */
-@media (hover: hover) {
-    .photo-tile:hover .photo-tile__caption,
-    .photo-tile:focus-visible .photo-tile__caption {
-        opacity: 1;
-    }
-}
-
-.photo-tile:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+.photo-tile:hover .photo-tile__caption {
+    color: var(--ink);
 }
 
 
-/* 7. VISUALIZADOR (tela cheia) --------------------------------------------
-   Duas colunas: a foto (ocupa o que sobrar) e o painel de EXIF (320px). */
+/* 8. VISUALIZADOR (tela cheia) --------------------------------------------
+   Também em papel branco: a foto como uma prancha, com a ficha técnica
+   (EXIF) numa coluna de 340px à direita. */
 .viewer {
     position: fixed;
     inset: 0;
     z-index: 100;
     display: grid;
-    grid-template-columns: 1fr 320px;
-    background: rgba(8, 8, 8, 0.97);
+    grid-template-columns: 1fr 340px;
+    grid-template-rows: minmax(0, 1fr); /* ocupa a altura toda da tela */
+    background: var(--paper);
 }
 
 .viewer__stage {
@@ -495,12 +641,12 @@ main {
     display: grid;
     place-items: center;
     min-height: 0;
-    padding: 24px 64px;
+    padding: 40px 72px;
 }
 
 .viewer__stage img {
     max-width: 100%;
-    max-height: calc(100vh - 48px);
+    max-height: calc(100vh - 80px);
     object-fit: contain;
     user-select: none;
 }
@@ -508,86 +654,94 @@ main {
 .viewer__nav,
 .viewer__close {
     position: absolute;
+    padding: 12px;
     border: 0;
     background: none;
-    color: var(--text-muted);
+    color: var(--graphite);
+    font-family: var(--font);
     font-size: 2.6rem;
+    font-weight: 300;
     line-height: 1;
     cursor: pointer;
-    padding: 12px;
 }
 
 .viewer__nav:hover,
 .viewer__close:hover {
-    color: var(--text);
+    color: var(--ink);
 }
 
 .viewer__nav--prev {
-    left: 8px;
     top: 50%;
+    left: 12px;
     transform: translateY(-50%);
 }
 
 .viewer__nav--next {
-    right: 8px;
     top: 50%;
+    right: 12px;
     transform: translateY(-50%);
 }
 
 .viewer__close {
-    top: 4px;
-    right: 8px;
+    top: 8px;
+    right: 12px;
     font-size: 2.2rem;
 }
 
 .viewer__info {
     overflow-y: auto;
-    padding: 32px 24px;
-    border-left: 1px solid var(--border);
-    background: var(--bg);
+    padding: 48px 32px;
+    border-left: 1px solid var(--line);
+    background: var(--paper);
 }
 
 .viewer__info h2 {
-    font-size: 1.2rem;
     margin-bottom: 6px;
+    font-size: var(--text-lg);
+    font-style: italic;
+    font-weight: 400;
     word-break: break-word;
 }
 
 .viewer__album {
     display: inline-block;
-    margin-bottom: 14px;
-    color: var(--accent);
-    font-size: 0.9rem;
-    text-decoration: none;
+    margin-bottom: 20px;
+    color: var(--graphite);
+    font-size: var(--text-sm);
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .viewer__album:hover {
-    text-decoration: underline;
+    color: var(--ink);
 }
 
 .viewer__description {
-    margin: 0 0 20px;
-    color: var(--text-muted);
+    margin: 0 0 24px;
     white-space: pre-line;
 }
 
 .viewer__counter {
-    margin: 0 0 20px;
-    color: var(--text-muted);
-    font-size: 0.85rem;
+    margin: 0 0 24px;
+    color: var(--graphite);
+    font-size: var(--text-sm);
 }
 
-/* Lista de EXIF: <dl> = "lista de definições" (rótulo + valor). */
+/* Ficha técnica: <dl> = "lista de definições" (rótulo + valor).
+   Números tabulares deixam os valores alinhados. */
 .exif {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 10px 16px;
-    margin: 0 0 24px;
-    font-size: 0.9rem;
+    gap: 8px 20px;
+    margin: 0 0 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
 }
 
 .exif dt {
-    color: var(--text-muted);
+    color: var(--graphite);
 }
 
 .exif dd {
@@ -597,22 +751,22 @@ main {
 
 .exif__empty {
     grid-column: 1 / -1;
-    color: var(--text-muted);
+    color: var(--graphite);
+    font-style: italic;
 }
 
 
-/* 8. ADMINISTRAÇÃO ------------------------------------------------------- */
+/* 9. ADMINISTRAÇÃO ------------------------------------------------------- */
 .panel {
     margin-bottom: 32px;
-    padding: 24px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface);
+    padding: 28px;
+    border: 1px solid var(--line);
+    background: var(--paper);
 }
 
 .panel h2 {
-    font-size: 1.15rem;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
+    font-size: var(--text-md);
 }
 
 .panel--narrow {
@@ -638,24 +792,23 @@ main {
 .album-row {
     display: grid;
     gap: 8px;
-    padding: 12px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg);
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    background: var(--paper);
 }
 
 .album-row--active {
-    border-color: var(--accent);
+    border-color: var(--ink);
 }
 
 .album-row__title {
-    font-weight: 600;
+    font-weight: 500;
     word-break: break-word;
 }
 
 .album-row__meta {
-    color: var(--text-muted);
-    font-size: 0.85rem;
+    color: var(--graphite);
+    font-size: var(--text-sm);
 }
 
 .album-row__actions {
@@ -669,8 +822,8 @@ main {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.85rem;
     margin-right: auto;
+    font-size: var(--text-sm);
 }
 
 .manager-header {
@@ -686,24 +839,25 @@ main {
 .dropzone {
     display: grid;
     place-items: center;
-    gap: 6px;
-    padding: 36px 16px;
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
+    gap: 4px;
+    padding: 40px 16px;
+    border: 1px dashed var(--graphite);
+    background: var(--proof);
+    color: var(--graphite);
     text-align: center;
-    color: var(--text-muted);
     cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
 }
 
 .dropzone:hover,
 .dropzone--over {
-    border-color: var(--accent);
-    background: rgba(224, 178, 92, 0.06);
+    border-style: solid;
+    border-color: var(--ink);
+    color: var(--ink);
 }
 
 .dropzone strong {
-    color: var(--text);
+    color: var(--ink);
+    font-weight: 500;
 }
 
 .dropzone input {
@@ -712,7 +866,7 @@ main {
 
 .upload-queue {
     display: grid;
-    gap: 8px;
+    gap: 10px;
     margin: 16px 0 0;
     padding: 0;
     list-style: none;
@@ -722,7 +876,7 @@ main {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 4px 12px;
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
 }
 
 .upload-item__name {
@@ -732,7 +886,7 @@ main {
 }
 
 .upload-item__status {
-    color: var(--text-muted);
+    color: var(--graphite);
 }
 
 .upload-item--done .upload-item__status {
@@ -747,46 +901,42 @@ main {
 .upload-item progress {
     grid-column: 1 / -1;
     width: 100%;
-    height: 4px;
+    height: 3px;
     border: 0;
-    border-radius: 2px;
     appearance: none;
-    background: var(--border);
+    background: var(--line);
 }
 
 .upload-item progress::-webkit-progress-bar {
-    background: var(--border);
-    border-radius: 2px;
+    background: var(--line);
 }
 
 .upload-item progress::-webkit-progress-value {
-    background: var(--accent);
-    border-radius: 2px;
+    background: var(--ink);
 }
 
 .upload-item progress::-moz-progress-bar {
-    background: var(--accent);
+    background: var(--ink);
 }
 
 .manage-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 14px;
+    gap: 18px;
     margin-top: 24px;
 }
 
 .manage-card {
     display: grid;
     gap: 6px;
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
 }
 
 .manage-card__thumb {
     position: relative;
     aspect-ratio: 1;
     overflow: hidden;
-    border-radius: var(--radius);
-    background: var(--bg);
+    background: var(--proof);
 }
 
 .manage-card__thumb img {
@@ -799,15 +949,14 @@ main {
     position: absolute;
     top: 6px;
     left: 6px;
-    background: var(--accent);
-    color: #1a1a1a;
 }
 
 .manage-card__title {
     overflow: hidden;
+    color: var(--graphite);
+    font-style: italic;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: var(--text-muted);
 }
 
 .manage-card__actions {
@@ -817,53 +966,100 @@ main {
 }
 
 
-/* 9. TELAS PEQUENAS -------------------------------------------------------
-   "@media (max-width: ...)" aplica as regras só quando a tela for estreita.
+/* 10. TELAS PEQUENAS E MOVIMENTO REDUZIDO ---------------------------------
+   "@media (max-width: ...)" aplica as regras só quando a tela é estreita.
    ------------------------------------------------------------------------- */
+@media (max-width: 1000px) {
+    /* O destaque vira uma coluna: foto em cima, texto embaixo. */
+    .hero {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
+        margin-bottom: 80px;
+    }
+
+    .hero__title {
+        max-width: 18ch;
+    }
+}
+
 @media (max-width: 900px) {
     .admin-columns {
         grid-template-columns: 1fr;
     }
 
-    /* No celular o painel de EXIF vai para baixo da foto. */
+    /* O painel de EXIF vai para baixo da foto. */
     .viewer {
         grid-template-columns: 1fr;
         grid-template-rows: minmax(0, 1fr) auto;
     }
 
     .viewer__stage {
-        padding: 48px 8px 8px;
+        padding: 56px 8px 8px;
     }
 
     .viewer__stage img {
-        max-height: calc(65vh - 56px);
+        max-height: calc(62vh - 64px);
     }
 
     .viewer__info {
-        max-height: 35vh;
-        padding: 16px;
+        max-height: 38vh;
+        padding: 20px 16px;
+        border-top: 1px solid var(--line);
         border-left: 0;
-        border-top: 1px solid var(--border);
     }
 }
 
 @media (max-width: 600px) {
     :root {
-        --row-height: 140px;
-        --gap: 3px;
+        --gutter: 16px;
+        --row-height: 150px;
+        --grid-gap-x: 6px;
+        --grid-gap-y: 18px;
     }
 
-    main,
     .site-header {
-        padding-left: 16px;
-        padding-right: 16px;
+        padding-top: 20px;
+        padding-bottom: 20px;
     }
 
     .page-title {
-        font-size: 1.4rem;
+        font-size: var(--text-lg);
+    }
+
+    .section {
+        margin-bottom: 64px;
     }
 
     .panel {
         padding: 16px;
+    }
+
+    /* Celular: retrato e texto lado a lado; links e direitos autorais
+       descem para uma linha própria, alinhados à esquerda. */
+    .colophon__inner {
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 14px 16px;
+        padding-top: 24px;
+        padding-bottom: 24px;
+    }
+
+    .colophon__portrait {
+        width: 48px;
+        height: 48px;
+    }
+
+    .colophon__side {
+        grid-column: 1 / -1;
+        grid-template-columns: auto auto;
+        justify-content: space-between;
+        justify-items: start;
+        text-align: left;
+    }
+}
+
+/* Quem pediu ao sistema menos animação não vê o fade da foto. */
+@media (prefers-reduced-motion: reduce) {
+    .hero__photo img {
+        transition: none;
     }
 }

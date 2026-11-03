@@ -280,20 +280,6 @@ function exifRows(exif = {}) {
     return rows.filter(([, value]) => value !== null && value !== undefined && value !== "");
 }
 
-/**
- * Resumo do EXIF em uma linha, para legendas curtas:
- *   "50 mm · ƒ/1,8 · 1/250 s · ISO 100"
- * Devolve "" se a foto não tiver nenhum desses dados.
- */
-function exifSummary(exif = {}) {
-    return [
-        exif.focal_length ? `${formatNumber(exif.focal_length)} mm` : null,
-        exif.aperture ? `ƒ/${formatNumber(exif.aperture)}` : null,
-        exif.shutter_speed ? `${exif.shutter_speed} s` : null,
-        exif.iso ? `ISO ${exif.iso}` : null,
-    ].filter(Boolean).join(" · ");
-}
-
 
 /* ==========================================================================
    MENU DO CABEÇALHO
@@ -306,10 +292,8 @@ function renderNav() {
         return;
     }
 
-    const links = [
-        el("a", { href: "index.html", text: "Explorar" }),
-        el("a", { href: "index.html#albuns", text: "Álbuns" }),
-    ];
+    // A logo já leva à página inicial; o menu só aponta para os álbuns.
+    const links = [el("a", { href: "index.html#albuns", text: "Álbuns" })];
 
     if (Auth.isLoggedIn()) {
         links.push(el("a", { href: "admin.html", text: "Gerenciar" }));

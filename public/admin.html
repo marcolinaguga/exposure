@@ -4,10 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Gerenciar · Acervo Fotográfico</title>
+    <title>Gerenciar | Exposure</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,400&display=swap">
     <!-- Pede aos buscadores (Google etc.) que não indexem esta página. -->
     <meta name="robots" content="noindex">
-    <link rel="stylesheet" href="css/style.css">
+    <!-- O ?v=2 é a versão do CSS: aumente o número sempre que mudar o
+         style.css, para o navegador baixar o arquivo novo em vez de usar
+         a cópia guardada (cache). -->
+    <link rel="stylesheet" href="css/style.css?v=2">
 
     <!-- exifr: biblioteca que lê o EXIF das fotos no navegador.
          Versão fixada (7.1.3) para o site não mudar sozinho se a
@@ -19,7 +26,16 @@
 </head>
 <body>
     <header class="site-header">
-        <a class="site-header__logo" href="index.html">Acervo Fotográfico</a>
+        <a class="logo" href="index.html" aria-label="Exposure, página inicial">
+            <svg class="logo__wedge" viewBox="0 0 54 10" aria-hidden="true">
+                <rect x="0" y="0.5" width="9" height="9" fill="#232323"/>
+                <rect x="11" y="0.5" width="9" height="9" fill="#585858"/>
+                <rect x="22" y="0.5" width="9" height="9" fill="#8c8c8c"/>
+                <rect x="33" y="0.5" width="9" height="9" fill="#c2c2c2"/>
+                <rect x="44.5" y="1" width="8" height="8" fill="#ffffff" stroke="#232323"/>
+            </svg>
+            <span class="logo__name">exposure</span>
+        </a>
         <nav class="site-nav" id="site-nav"></nav>
     </header>
 
